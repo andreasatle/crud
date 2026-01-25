@@ -55,7 +55,7 @@ test_I003_person_update_and_mutation_semantics, passed
 I-004 — Person Creation Semantics
 
 [TEST]
-test_I004_person_creation_semantics, pass
+test_I004_person_creation_semantics, passed
 
 [INVARIANT]
 I-005 — Person Create Operation Semantics
@@ -65,6 +65,26 @@ test_I005_person_create_operation_semantics, failed
 
 [TASK]
 task_I005
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
+
+[INVARIANT]
+I-006 — Person Read Operation Semantics
+
+[TEST]
+test_I006_person_read_operation_semantics, passed
+
+[INVARIANT]
+I-007 — Person Update Operation Semantics
+
+[TEST]
+test_I007_person_update_operation_semantics, failed
+
+[TASK]
+task_I007
 
 [IMPLEMENTATION]
 

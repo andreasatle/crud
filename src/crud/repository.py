@@ -16,3 +16,12 @@ class FakePersonStore:
 
     def get_by_id(self, id: str) -> Optional[Person]:
         return self._people.get(id)
+
+    def update(self, person: Person) -> None:
+        if person.id not in self._people:
+            raise ValueError(f"Person with id '{person.id}' does not exist")
+        self._people[person.id] = Person(
+            id=person.id,
+            name=person.name,
+            email=person.email,
+        )
