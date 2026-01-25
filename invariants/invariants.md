@@ -15,3 +15,5 @@ Each invariant MUST be enforceable by one or more tests.
 * I-006 — Person Read Operation Semantics
 * I-007 — Person Update Operation Semantics
 * I-008 — Person Delete Operation Semantics
+* I-009 — Person Lifecycle Closure and Irreversibility
+* I-010 — Address Identity and Structure
