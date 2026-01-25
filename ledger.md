@@ -21,7 +21,52 @@ Initialized `src/crud/api.py` with api-functions raising `NotImplementedError`.
 I-001 — Person Identity and Structure
 
 [TEST]
-test_I001_person_identity_and_structure
+test_I001_person_identity_and_structure, failed
 
 [TASK]
 task_I001
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
+
+[INVARIANT]
+I-002 — Person Identity Semantics and Stability
+
+[TEST]
+test_I002_person_identity_semantics_and_stability, failed
+
+[TASK]
+task_I002
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
+
+[INVARIANT]
+I-003 — Person Update and Mutation Semantics
+
+[TEST]
+test_I003_person_update_and_mutation_semantics, passed
+
+[INVARIANT]
+I-004 — Person Creation Semantics
+
+[TEST]
+test_I004_person_creation_semantics, pass
+
+[INVARIANT]
+I-005 — Person Create Operation Semantics
+
+[TEST]
+test_I005_person_create_operation_semantics, failed
+
+[TASK]
+task_I005
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
