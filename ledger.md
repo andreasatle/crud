@@ -104,3 +104,9 @@ task_I008
 
 [VALIDATION]
 test pass
+
+[INVARIANT]
+I-009 — Person Lifecycle Closure and Irreversibility
+
+[TEST]
+test_I009_person_lifecycle_closure_and_irreversibility, passed
