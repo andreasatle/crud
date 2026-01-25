@@ -124,3 +124,16 @@ task_I010
 
 [VALIDATION]
 test pass
+
+[INVARIANT]
+I-011 — Address Identity and Structure
+
+[TEST]
+test_I011_address_identity_and_structure, failed
+
+[INVARIANT]
+I-012 — Address Update and Mutation Semantics
+
+[TEST]
+test_I012_address_update_and_mutation_semantics, passed
+
