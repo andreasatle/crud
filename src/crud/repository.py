@@ -25,3 +25,8 @@ class FakePersonStore:
             name=person.name,
             email=person.email,
         )
+
+    def delete(self, id: str) -> None:
+        if id not in self._people:
+            raise ValueError(f"Person with id '{id}' does not exist")
+        del self._people[id]

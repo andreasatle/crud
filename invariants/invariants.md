@@ -7,3 +7,11 @@ Each invariant MUST be enforceable by one or more tests.
 
 ---
 
+* I-001 — Person Identity and Structure
+* I-002 — Person Identity Semantics and Stability
+* I-003 — Person Update and Mutation Semantics
+* I-004 — Person Creation Semantics
+* I-005 — Person Create Operation Semantics
+* I-006 — Person Read Operation Semantics
+* I-007 — Person Update Operation Semantics
+* I-008 — Person Delete Operation Semantics

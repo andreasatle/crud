@@ -90,3 +90,17 @@ task_I007
 
 [VALIDATION]
 test pass
+
+[INVARIANT]
+I-008 — Person Delete Operation Semantics
+
+[TEST]
+test_I008_person_delete_operation_semantics, failed
+
+[TASK]
+task_I008
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
