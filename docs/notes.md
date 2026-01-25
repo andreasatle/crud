@@ -260,3 +260,68 @@ If you want next, we can:
 
 * formalize “required vs advisory” policies, or
 * define a hard rule for when *no* policies should be injected.
+
+---
+---
+
+## Invariant Progression (Compressed Form)
+
+### **Phase 1 — Meaning (What the entity *is*)**
+
+Defines the entity independent of time or behavior.
+
+* Structure (required fields)
+* Identity and equality
+* Mutation semantics (what may change without identity change)
+
+➡︎ *Pure semantics. No state. No operations.*
+
+---
+
+### **Phase 2 — Lifecycle (When the entity exists)**
+
+Introduces time, but still no system behavior.
+
+* Creation semantics
+* Existence vs non-existence
+* Conceptual distinction between create and update
+
+➡︎ *Still no executor, but ordering now exists.*
+
+---
+
+### **Phase 3 — Operations (How the system acts)**
+
+Forces state and executability.
+
+* Create semantics
+* Read semantics
+* Update semantics
+* Delete semantics
+
+➡︎ *State becomes unavoidable. Some executor must exist (fake or real).*
+
+---
+
+### **Phase 4 — System Pressure (How reality intrudes)**
+
+Only appears when scale or composition demands it.
+
+* Relationships
+* Referential integrity
+* Transactions
+* Concurrency
+* Durability
+
+➡︎ *This is where real persistence becomes forced.*
+
+---
+
+## One-line mental model
+
+> **Meaning → Lifecycle → Operations → Infrastructure**
+
+This is the version you should keep in your head.
+
+---
+---
