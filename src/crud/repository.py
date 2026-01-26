@@ -9,6 +9,10 @@ from crud.person import Person
 class FakePersonStore:
     def __init__(self) -> None:
         self._people: Dict[str, Person] = {}
+        self._address_stores: Set[FakeAddressStore] = set()
+
+    def _register_address_store(self, addresses: FakeAddressStore) -> None:
+        self._address_stores.add(addresses)
 
     def create(self, person: Person) -> None:
         if person.id in self._people:
@@ -30,24 +34,29 @@ class FakePersonStore:
     def delete(self, id: str, addresses: FakeAddressStore | None = None) -> None:
         if id not in self._people:
             raise ValueError(f"Person with id '{id}' does not exist")
-        if addresses is not None:
+        address_stores = (
+            [addresses] if addresses is not None else list(self._address_stores)
+        )
+        for address_store in address_stores:
             owned_ids = [
                 address_id
-                for address_id, address in addresses._addresses.items()
+                for address_id, address in address_store._addresses.items()
                 if address.person_id == id
             ]
             for address_id in owned_ids:
-                del addresses._addresses[address_id]
-                addresses._deleted_ids.add(address_id)
+                address_store.delete(address_id)
         del self._people[id]
 
 
 class FakeAddressStore:
-    def __init__(self) -> None:
+    def __init__(self, people: FakePersonStore | None = None) -> None:
         self._addresses: Dict[str, Address] = {}
         self._deleted_ids: Set[str] = set()
+        self._people = people
+        if self._people is not None:
+            self._people._register_address_store(self)
 
-    def create(self, address: Address, people: FakePersonStore) -> None:
+    def create(self, address: Address, people: FakePersonStore | None = None) -> None:
         if not isinstance(address.id, str) or address.id == "":
             raise ValueError("Address id must be a non-empty string")
         if not isinstance(address.street, str) or address.street == "":
@@ -60,10 +69,15 @@ class FakeAddressStore:
             raise ValueError("Address country must be a string or None")
         if not isinstance(address.person_id, str) or address.person_id == "":
             raise ValueError("Address person_id must be a non-empty string")
-        if address.id in self._addresses or address.id in self._deleted_ids:
+        if address.id in self._addresses:
             raise ValueError(f"Address with id '{address.id}' already exists")
-        if people.get_by_id(address.person_id) is None:
+        effective_people = self._people if self._people is not None else people
+        if effective_people is None:
+            raise ValueError("Address store requires a person store")
+        if effective_people.get_by_id(address.person_id) is None:
             raise ValueError(f"Person with id '{address.person_id}' does not exist")
+        if address.id in self._deleted_ids:
+            self._deleted_ids.remove(address.id)
         self._addresses[address.id] = address
 
     def get_by_id(self, id: str) -> Optional[Address]:
