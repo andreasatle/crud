@@ -164,3 +164,21 @@ task_I014
 
 [VALIDATION]
 test pass
+
+[INVARIANT]
+I-015 — Address Read Operation Semantics
+
+[TEST]
+test_I015_address_read_operation_semantics
+
+[TASK]
+task_I015
+
+[IMPLEMETATION]
+
+[VALIDATION]
+test pass
+
+[INTERRUPTION]
+I realized that I-013 and I-014 has to be hardened.
+An address require a person, and that person has to exist.

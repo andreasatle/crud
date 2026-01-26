@@ -56,5 +56,7 @@ class FakeAddressStore:
             raise ValueError(f"Person with id '{address.person_id}' does not exist")
         self._addresses[address.id] = address
 
-    def get_by_id(self, id: str) -> Optional[Address]:
-        return self._addresses.get(id)
+    def get_by_id(self, id: str) -> Address:
+        if id not in self._addresses:
+            raise KeyError(f"Address with id '{id}' does not exist")
+        return self._addresses[id]
