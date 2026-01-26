@@ -169,7 +169,7 @@ test pass
 I-015 — Address Read Operation Semantics
 
 [TEST]
-test_I015_address_read_operation_semantics
+test_I015_address_read_operation_semantics, failed
 
 [TASK]
 task_I015
@@ -179,6 +179,13 @@ task_I015
 [VALIDATION]
 test pass
 
-[INTERRUPTION]
+[NOTE]
 I realized that I-013 and I-014 has to be hardened.
 An address require a person, and that person has to exist.
+We can add an invariant instead of going back.
+
+[INVARIANT]
+I-016 — Address Ownership Referential Integrity
+
+[TEST]
+test_I016_address_ownership_referential_integrity, passed

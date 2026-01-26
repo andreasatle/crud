@@ -22,3 +22,4 @@ Each invariant MUST be enforceable by one or more tests.
 * I-013 — Address Creation Semantics
 * I-014 — Address Create Operation Semantics
 * I-015 — Address Read Operation Semantics
+* I-016 — Address Ownership Referential Integrity
