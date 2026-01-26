@@ -203,3 +203,9 @@ task_I017
 
 [VALIDATION]
 test pass
+
+[INVARIANT]
+I-018 — Address Update Operation Semantics
+
+[TEST]
+test_I018_address_update_operation_semantics, passed

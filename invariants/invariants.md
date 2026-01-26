@@ -24,3 +24,4 @@ Each invariant MUST be enforceable by one or more tests.
 * I-015 — Address Read Operation Semantics
 * I-016 — Address Ownership Referential Integrity
 * I-017 — Person–Address Lifecycle Coupling (Cascading Delete Semantics)
+* I-018 — Address Update Operation Semantics
