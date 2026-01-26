@@ -209,3 +209,17 @@ I-018 — Address Update Operation Semantics
 
 [TEST]
 test_I018_address_update_operation_semantics, passed
+
+[INVARIANT]
+I-019 — Address Delete Operation Semantics (precise definition)
+
+[TEST]
+test_I019_address_delete_operation_semantics, failed
+
+[TASK]
+task_I019
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test passed
