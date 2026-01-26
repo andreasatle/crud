@@ -352,3 +352,21 @@ If invariant meaning changes when the Fake is removed, the invariant was undersp
 
 ---
 ___
+
+Here is a **very short, symmetric summary** you can save:
+
+---
+
+**Invariants** define what must always be true.
+They are timeless, testable, and enforced by tests.
+
+**Directives** define what we choose to do.
+They are contextual, revisable, and enforced by review.
+
+Invariants express **correctness**.
+Directives express **intent**.
+
+Both are authoritative while active, but only invariants are permanent.
+
+---
+---
