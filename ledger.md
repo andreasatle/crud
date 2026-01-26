@@ -137,3 +137,8 @@ I-012 — Address Update and Mutation Semantics
 [TEST]
 test_I012_address_update_and_mutation_semantics, passed
 
+[INVARIANT]
+I-013 — Address Creation Semantics
+
+[TEST]
+test_I013_address_creation_semantics, passed
