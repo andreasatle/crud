@@ -20,3 +20,4 @@ Each invariant MUST be enforceable by one or more tests.
 * I-011 — Address Identity Semantics and Stability
 * I-012 — Address Update and Mutation Semantics
 * I-013 — Address Creation Semantics
+* I-014 — Address Create Operation Semantics

@@ -131,6 +131,14 @@ I-011 — Address Identity and Structure
 [TEST]
 test_I011_address_identity_and_structure, failed
 
+[TASK]
+task_I011
+
+[IMPLEMETATION]
+
+[VALIDATION]
+test pass
+
 [INVARIANT]
 I-012 — Address Update and Mutation Semantics
 
@@ -142,3 +150,17 @@ I-013 — Address Creation Semantics
 
 [TEST]
 test_I013_address_creation_semantics, passed
+
+[INVARIANT]
+I-014 — Address Create Operation Semantics
+
+[TEST]
+test_I014_address_create_operation_semantics, failed
+
+[TASK]
+task_I014
+
+[IMPLEMETATION]
+
+[VALIDATION]
+test pass
