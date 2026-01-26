@@ -174,7 +174,7 @@ test_I015_address_read_operation_semantics, failed
 [TASK]
 task_I015
 
-[IMPLEMETATION]
+[IMPLEMENTATION]
 
 [VALIDATION]
 test pass
@@ -189,3 +189,17 @@ I-016 — Address Ownership Referential Integrity
 
 [TEST]
 test_I016_address_ownership_referential_integrity, passed
+
+[INVARIANT]
+I-017 — Person–Address Lifecycle Coupling (Cascading Delete Semantics)
+
+[TEST]
+test_I017_person_address_lifecycle_coupling_cascade_delete, failed
+
+[TASK]
+task_I017
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test pass
