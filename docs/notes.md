@@ -325,3 +325,30 @@ This is the version you should keep in your head.
 
 ---
 ---
+Here is a **concise, durable summary** you can save. It is written to stand on its own and to guide future you (or an automated system) without context.
+
+---
+
+### On the Use of “Fake” Implementations
+
+Fake implementations are **semantic executors**, not prototypes of the final system.
+
+They exist to make **invariants executable** before committing to technology choices such as databases, ORMs, transactions, or concurrency models.
+
+Key principles:
+
+* A Fake enforces **meaning**, not infrastructure.
+* A Fake must be **explicitly named** and never masquerade as a real implementation.
+* Fakes are **temporary enforcement mechanisms**, not temporary truths.
+* Authority always resides in **invariants and their tests**, never in the Fake itself.
+* Anything that cannot be enforced by a Fake is **not a domain invariant** and must be deferred.
+* Deferred assumptions (e.g. persistence, transactions, concurrency) must be **explicitly acknowledged**, never implied.
+
+Fakes allow correctness to be defined **once**, independently of how it is eventually implemented.
+
+Replacing a Fake with a real implementation must not change invariant meaning—only the enforcement mechanism.
+
+If invariant meaning changes when the Fake is removed, the invariant was underspecified.
+
+---
+___
