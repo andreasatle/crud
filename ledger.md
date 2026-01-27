@@ -223,3 +223,35 @@ task_I019
 
 [VALIDATION]
 test passed
+
+[INVARIANT]
+I-020 — Address Lifecycle Closure and Dependency
+
+[TEST]
+test_I020_address_lifecycle_closure_and_dependency, failed
+
+[TASK]
+task_I020
+
+[IMPLEMENTATION]
+
+[VALIDATION]
+test passed
+
+[NOTE]
+* The first round of invariants are done.
+* Next is to transfer the persistence to SqlAlchemy 2.0.
+* We introduced the notion of directives that takes the place of invariants.
+* We wrote a backtracked Fake storage directive for the existing scaffolding.
+* I'm not sure how that would have been introduced, if it would have at all.
+
+[DIRECTIVE]
+D-001 - Introduction of SQL Persistence
+
+[PREREQUISITE]
+PR-001 — SQLAlchemy 2.x availability
+```
+uv add "sqlalchemy>=2.0,<3.0"
+```
+[TASK]
+Task — D-001-T1: Introduce SQLAlchemy 2.x Persistence Skeleton
