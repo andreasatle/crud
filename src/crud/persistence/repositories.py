@@ -32,6 +32,17 @@ class SqlPersonRepository:
             row.email = person.email
             session.commit()
 
+    def delete(self, person_id: str) -> None:
+        with self._session_factory() as session:
+            row = session.get(PersonRow, person_id)
+            if row is None:
+                raise ValueError(f"Person with id '{person_id}' does not exist")
+            session.execute(
+                AddressRow.__table__.delete().where(AddressRow.person_id == person_id)
+            )
+            session.delete(row)
+            session.commit()
+
 
 class SqlAddressRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
@@ -73,4 +84,12 @@ class SqlAddressRepository:
             row.city = address.city
             row.postal_code = address.postal_code
             row.country = address.country
+            session.commit()
+
+    def delete(self, address_id: str) -> None:
+        with self._session_factory() as session:
+            row = session.get(AddressRow, address_id)
+            if row is None:
+                raise ValueError(f"Address with id '{address_id}' does not exist")
+            session.delete(row)
             session.commit()

@@ -370,3 +370,100 @@ Both are authoritative while active, but only invariants are permanent.
 
 ---
 ---
+
+Short answer: **3 core tasks left**, plus **optional clean-up**.
+
+### D-001 status overview
+
+You’ve completed the **structural and minimal behavioral spine** of SQL persistence:
+
+Completed:
+
+1. **T1** — Persistence skeleton (engine/session/base)
+2. **T2** — ORM models (structure only)
+3. **T3** — Schema creation (DDL)
+4. **T4** — SQL repositories (create)
+5. **T5** — SQL repositories (read)
+
+At this point, SQL persistence is **real, usable, and parallel** to Fake.
+
+---
+
+### What is *still missing* for D-001
+
+#### **T6 — Update operations (SQL, parallel to Fake)**
+
+Mirror:
+
+* Person update semantics (I-007)
+* Address update semantics (I-018)
+
+Scope:
+
+* `update(person)`
+* `update(address)`
+* No lifecycle logic
+* No test migration
+
+This completes CRUD minus delete.
+
+---
+
+#### **T7 — Delete operations (SQL, parallel to Fake)**
+
+Mirror:
+
+* Person delete (I-008, I-009, cascade via DB or repo)
+* Address delete (I-019, I-020)
+
+Important:
+
+* This is where **foreign keys + cascade rules** get exercised
+* Still no test authority shift
+
+---
+
+#### **T8 — Repository parity verification (no behavior change)**
+
+Not code-heavy.
+
+Purpose:
+
+* Assert that SQL repositories now support **the same surface** as Fake:
+
+  * create
+  * read
+  * update
+  * delete
+
+This is the *closure* of D-001.
+
+---
+
+### Optional (but clean) follow-ups (not D-001)
+
+* **D-002** — Switch test authority from Fake → SQL
+* **D-003** — Remove Fake (or demote to test-only)
+* **D-004** — Migrations, constraints, indexing
+
+---
+
+### Why the number is small (important insight)
+
+D-001 is **not** “implement persistence”.
+It is:
+
+> *Introduce SQL as a peer to Fake, without changing authority.*
+
+That makes it:
+
+* finite
+* mechanical
+* low-entropy
+
+You’re already ~70% done.
+
+If you want, next we can:
+
+* enumerate **exact method signatures** for T6/T7, or
+* decide whether cascade delete belongs in DB or repository logic (design fork).
