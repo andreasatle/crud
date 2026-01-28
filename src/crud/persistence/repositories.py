@@ -23,6 +23,15 @@ class SqlPersonRepository:
                 return None
             return Person(id=row.id, name=row.name, email=row.email)
 
+    def update(self, person: Person) -> None:
+        with self._session_factory() as session:
+            row = session.get(PersonRow, person.id)
+            if row is None:
+                raise ValueError(f"Person with id '{person.id}' does not exist")
+            row.name = person.name
+            row.email = person.email
+            session.commit()
+
 
 class SqlAddressRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
@@ -54,3 +63,14 @@ class SqlAddressRepository:
                 postal_code=row.postal_code,
                 country=row.country,
             )
+
+    def update(self, address: Address) -> None:
+        with self._session_factory() as session:
+            row = session.get(AddressRow, address.id)
+            if row is None:
+                raise ValueError(f"Address with id '{address.id}' does not exist")
+            row.street = address.street
+            row.city = address.city
+            row.postal_code = address.postal_code
+            row.country = address.country
+            session.commit()
