@@ -16,7 +16,7 @@ def test_I018_address_update_operation_semantics():
     """
 
     people = FakePersonStore()
-    addresses = FakeAddressStore()
+    addresses = FakeAddressStore(people)
 
     # Setup owning person
     person = Person(id="person-1", name="Alice", email=None)

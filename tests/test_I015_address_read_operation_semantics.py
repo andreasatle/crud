@@ -11,7 +11,7 @@ def test_I015_address_read_operation_semantics():
     """
 
     people = FakePersonStore()
-    addresses = FakeAddressStore()
+    addresses = FakeAddressStore(people)
 
     # Create owning person
     person = Person(id="person-1", name="Alice", email=None)

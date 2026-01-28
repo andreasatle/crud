@@ -12,8 +12,6 @@ def test_I019_address_delete_operation_semantics():
     Invariant I-019 — Address Delete Operation Semantics
     """
 
-    repo = FakeAddressStore()
-
     address = Address(
         id="address-1",
         person_id="person-1",

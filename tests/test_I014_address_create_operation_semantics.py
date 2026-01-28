@@ -11,7 +11,7 @@ def test_I014_address_create_operation_semantics():
     """
 
     people = FakePersonStore()
-    addresses = FakeAddressStore()
+    addresses = FakeAddressStore(people)
 
     # Create owning person
     person = Person(id="person-1", name="Alice", email=None)

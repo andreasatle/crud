@@ -13,7 +13,7 @@ def test_I016_address_ownership_referential_integrity():
     """
 
     people = FakePersonStore()
-    addresses = FakeAddressStore()
+    addresses = FakeAddressStore(people)
 
     # Existing person
     person = Person(id="person-1", name="Alice", email=None)

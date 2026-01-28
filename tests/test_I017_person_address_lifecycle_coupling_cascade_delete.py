@@ -14,7 +14,7 @@ def test_I017_person_address_lifecycle_coupling_cascade_delete():
     """
 
     people = FakePersonStore()
-    addresses = FakeAddressStore()
+    addresses = FakeAddressStore(people)
 
     # Create person
     person = Person(id="person-1", name="Alice", email=None)
