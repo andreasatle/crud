@@ -2,23 +2,18 @@ import pytest
 
 from crud.person import Person
 from crud.address import Address
-from crud.repository import FakePersonStore
-from crud.repository import FakeAddressStore
 
 
-def test_I017_person_address_lifecycle_coupling_cascade_delete():
+def test_I017_person_address_lifecycle_coupling_cascade_delete(person_repo, address_repo):
     """
     Invariant I-017 — Person–Address Lifecycle Coupling
 
     Deleting a Person must delete all owned Addresses atomically.
     """
 
-    people = FakePersonStore()
-    addresses = FakeAddressStore(people)
-
     # Create person
     person = Person(id="person-1", name="Alice", email=None)
-    people.create(person)
+    person_repo.create(person)
 
     # Create addresses owned by the person
     a1 = Address(
@@ -39,28 +34,28 @@ def test_I017_person_address_lifecycle_coupling_cascade_delete():
         country=None,
     )
 
-    addresses.create(a1, people)
-    addresses.create(a2, people)
+    address_repo.create(a1)
+    address_repo.create(a2)
 
-    assert addresses.get_by_id("address-1") == a1
-    assert addresses.get_by_id("address-2") == a2
+    assert address_repo.get_by_id("address-1") == a1
+    assert address_repo.get_by_id("address-2") == a2
 
     # Delete person (must cascade)
-    people.delete("person-1", addresses)
+    person_repo.delete("person-1")
 
     # Person no longer exists
-    assert people.get_by_id("person-1") is None
+    assert person_repo.get_by_id("person-1") is None
 
     # Owned addresses must no longer exist
-    assert addresses.get_by_id("address-1") is None
-    assert addresses.get_by_id("address-2") is None
+    assert address_repo.get_by_id("address-1") is None
+    assert address_repo.get_by_id("address-2") is None
 
     # Further operations on deleted addresses must fail
     with pytest.raises(ValueError):
-        addresses.delete("address-1")
+        address_repo.delete("address-1")
 
     with pytest.raises(ValueError):
-        addresses.update(
+        address_repo.update(
             Address(
                 id="address-1",
                 person_id="person-1",

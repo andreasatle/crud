@@ -2,20 +2,16 @@ import pytest
 
 from crud.address import Address
 from crud.person import Person
-from crud.repository import FakePersonStore, FakeAddressStore
 
 
-def test_I014_address_create_operation_semantics():
+def test_I014_address_create_operation_semantics(person_repo, address_repo):
     """
     Invariant I-014 — Address Create Operation Semantics
     """
 
-    people = FakePersonStore()
-    addresses = FakeAddressStore(people)
-
     # Create owning person
     person = Person(id="person-1", name="Alice", email=None)
-    people.create(person)
+    person_repo.create(person)
 
     # Creating an Address for an existing Person succeeds
     address = Address(
@@ -27,8 +23,8 @@ def test_I014_address_create_operation_semantics():
         country=None,
     )
 
-    addresses.create(address, people)
-    assert addresses.get_by_id("address-1") == address
+    address_repo.create(address)
+    assert address_repo.get_by_id("address-1") == address
 
     # Creating an Address with the same id must fail
     conflict = Address(
@@ -41,7 +37,7 @@ def test_I014_address_create_operation_semantics():
     )
 
     with pytest.raises(ValueError):
-        addresses.create(conflict, people)
+        address_repo.create(conflict)
 
     # Creating an Address for a nonexistent Person must fail
     orphan = Address(
@@ -54,4 +50,4 @@ def test_I014_address_create_operation_semantics():
     )
 
     with pytest.raises(ValueError):
-        addresses.create(orphan, people)
+        address_repo.create(orphan)

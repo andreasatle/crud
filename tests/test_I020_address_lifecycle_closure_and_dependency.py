@@ -4,20 +4,16 @@ import pytest
 
 from crud.person import Person
 from crud.address import Address
-from crud.repository import FakePersonStore, FakeAddressStore
 
 
-def test_I020_address_lifecycle_closure_and_dependency():
+def test_I020_address_lifecycle_closure_and_dependency(person_repo, address_repo):
     """
     Invariant I-020 — Address Lifecycle Closure and Dependency
     """
 
-    people = FakePersonStore()
-    addresses = FakeAddressStore(people)
-
     # Create person
     person = Person(id="person-1", name="Alice", email=None)
-    people.create(person)
+    person_repo.create(person)
 
     # Create address
     address = Address(
@@ -28,21 +24,21 @@ def test_I020_address_lifecycle_closure_and_dependency():
         postal_code="12345",
         country=None,
     )
-    addresses.create(address)
+    address_repo.create(address)
 
     # Address exists
-    assert addresses.get_by_id("address-1") == address
+    assert address_repo.get_by_id("address-1") == address
 
     # Delete address (terminal)
-    addresses.delete("address-1")
+    address_repo.delete("address-1")
 
-    assert addresses.get_by_id("address-1") is None
-
-    with pytest.raises(ValueError):
-        addresses.delete("address-1")
+    assert address_repo.get_by_id("address-1") is None
 
     with pytest.raises(ValueError):
-        addresses.update(
+        address_repo.delete("address-1")
+
+    with pytest.raises(ValueError):
+        address_repo.update(
             Address(
                 id="address-1",
                 person_id="person-1",
@@ -62,12 +58,12 @@ def test_I020_address_lifecycle_closure_and_dependency():
         postal_code="54321",
         country="US",
     )
-    addresses.create(address2)
+    address_repo.create(address2)
 
-    assert addresses.get_by_id("address-1") == address2
+    assert address_repo.get_by_id("address-1") == address2
 
     # Delete person => cascades to addresses
-    people.delete("person-1")
+    person_repo.delete("person-1")
 
-    assert people.get_by_id("person-1") is None
-    assert addresses.get_by_id("address-1") is None
+    assert person_repo.get_by_id("person-1") is None
+    assert address_repo.get_by_id("address-1") is None

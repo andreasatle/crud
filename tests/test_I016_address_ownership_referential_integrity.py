@@ -2,22 +2,18 @@ import pytest
 
 from crud.person import Person
 from crud.address import Address
-from crud.repository import FakePersonStore, FakeAddressStore
 
 
-def test_I016_address_ownership_referential_integrity():
+def test_I016_address_ownership_referential_integrity(person_repo, address_repo):
     """
     Invariant I-016 — Address Ownership Referential Integrity
 
     An Address must reference an existing Person.
     """
 
-    people = FakePersonStore()
-    addresses = FakeAddressStore(people)
-
     # Existing person
     person = Person(id="person-1", name="Alice", email=None)
-    people.create(person)
+    person_repo.create(person)
 
     # Creating an address with an existing person succeeds
     address = Address(
@@ -29,8 +25,8 @@ def test_I016_address_ownership_referential_integrity():
         country=None,
     )
 
-    addresses.create(address, people)
-    assert addresses.get_by_id("address-1") == address
+    address_repo.create(address)
+    assert address_repo.get_by_id("address-1") == address
 
     # Creating an address with a non-existent person must fail
     invalid_address = Address(
@@ -43,4 +39,4 @@ def test_I016_address_ownership_referential_integrity():
     )
 
     with pytest.raises(ValueError):
-        addresses.create(invalid_address, people)
+        address_repo.create(invalid_address)

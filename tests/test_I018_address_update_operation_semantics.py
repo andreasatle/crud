@@ -1,11 +1,10 @@
 import pytest
 
 from crud.address import Address
-from crud.repository import FakePersonStore, FakeAddressStore
 from crud.person import Person
 
 
-def test_I018_address_update_operation_semantics():
+def test_I018_address_update_operation_semantics(person_repo, address_repo):
     """
     Invariant I-018 — Address Update Operation Semantics
 
@@ -15,12 +14,9 @@ def test_I018_address_update_operation_semantics():
     - mutates only non-identity fields
     """
 
-    people = FakePersonStore()
-    addresses = FakeAddressStore(people)
-
     # Setup owning person
     person = Person(id="person-1", name="Alice", email=None)
-    people.create(person)
+    person_repo.create(person)
 
     # Create address
     original = Address(
@@ -31,7 +27,7 @@ def test_I018_address_update_operation_semantics():
         postal_code="12345",
         country=None,
     )
-    addresses.create(original, people)
+    address_repo.create(original)
 
     # Update address fields (non-identity)
     updated = Address(
@@ -43,10 +39,10 @@ def test_I018_address_update_operation_semantics():
         country="US",
     )
 
-    addresses.update(updated)
+    address_repo.update(updated)
 
     # Identity preserved
-    stored = addresses.get_by_id("address-1")
+    stored = address_repo.get_by_id("address-1")
     assert stored == original
     assert stored.id == "address-1"
     assert stored.person_id == "person-1"
@@ -68,4 +64,4 @@ def test_I018_address_update_operation_semantics():
     )
 
     with pytest.raises(ValueError):
-        addresses.update(missing)
+        address_repo.update(missing)

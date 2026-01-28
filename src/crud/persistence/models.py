@@ -20,7 +20,7 @@ class AddressRow(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     person_id: Mapped[str] = mapped_column(
         String,
-        ForeignKey("person.id"),
+        ForeignKey("person.id", ondelete="CASCADE"),
         nullable=False,
     )
     street: Mapped[str] = mapped_column(String, nullable=False)
