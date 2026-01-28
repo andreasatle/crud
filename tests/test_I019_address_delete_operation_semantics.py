@@ -2,8 +2,9 @@
 
 import pytest
 
+from crud.person import Person
 from crud.address import Address
-from crud.address_repository import FakeAddressStore
+from crud.repository import FakePersonStore, FakeAddressStore
 
 
 def test_I019_address_delete_operation_semantics():
@@ -23,7 +24,19 @@ def test_I019_address_delete_operation_semantics():
     )
 
     # Create succeeds
+    people = FakePersonStore()
+    people.create(
+        Person(
+            id="person-1",
+            name="Alice",
+            email=None,
+        )
+    )
+
+    repo = FakeAddressStore(people)
+
     repo.create(address)
+
     assert repo.get_by_id("address-1") == address
 
     # Delete succeeds

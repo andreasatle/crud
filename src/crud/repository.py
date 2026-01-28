@@ -6,6 +6,10 @@ from crud.address import Address
 from crud.person import Person
 
 
+class AddressNotFoundError(ValueError, KeyError):
+    pass
+
+
 class FakePersonStore:
     def __init__(self) -> None:
         self._people: Dict[str, Person] = {}
@@ -94,6 +98,6 @@ class FakeAddressStore:
 
     def delete(self, id: str) -> None:
         if id in self._deleted_ids or id not in self._addresses:
-            raise ValueError(f"Address with id '{id}' does not exist")
+            raise AddressNotFoundError(f"Address with id '{id}' does not exist")
         del self._addresses[id]
         self._deleted_ids.add(id)
