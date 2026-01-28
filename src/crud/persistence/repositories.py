@@ -16,6 +16,13 @@ class SqlPersonRepository:
             session.add(row)
             session.commit()
 
+    def get_by_id(self, id: str) -> Person | None:
+        with self._session_factory() as session:
+            row = session.get(PersonRow, id)
+            if row is None:
+                return None
+            return Person(id=row.id, name=row.name, email=row.email)
+
 
 class SqlAddressRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
@@ -33,3 +40,17 @@ class SqlAddressRepository:
             )
             session.add(row)
             session.commit()
+
+    def get_by_id(self, id: str) -> Address | None:
+        with self._session_factory() as session:
+            row = session.get(AddressRow, id)
+            if row is None:
+                return None
+            return Address(
+                id=row.id,
+                person_id=row.person_id,
+                street=row.street,
+                city=row.city,
+                postal_code=row.postal_code,
+                country=row.country,
+            )
