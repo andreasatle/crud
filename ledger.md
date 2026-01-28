@@ -255,3 +255,12 @@ uv add "sqlalchemy>=2.0,<3.0"
 ```
 [TASK]
 Task — D-001-T1: Introduce SQLAlchemy 2.x Persistence Skeleton
+
+...
+
+[TASK]
+Task — D-001-T8: Repository Parity Verification (No Behavior Change)
+
+[VALIDATION]
+SQL repositories expose create/read/update/delete for Person and Address.
+D-001 persistence scaffolding structurally complete.
