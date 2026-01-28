@@ -264,3 +264,9 @@ Task — D-001-T8: Repository Parity Verification (No Behavior Change)
 [VALIDATION]
 SQL repositories expose create/read/update/delete for Person and Address.
 D-001 persistence scaffolding structurally complete.
+
+[NOTE]
+Noticed that there were two versions of address fake store. Removed one. (no task for this)
+
+[NOTE]
+Address store didn't require person store in early tests. Fixed this. (task_D002_T0)
