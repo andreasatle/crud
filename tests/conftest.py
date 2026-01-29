@@ -4,7 +4,6 @@ from sqlalchemy import event
 from crud.persistence import create_engine_from_url, create_session_factory
 from crud.persistence.models import Base
 from crud.persistence.repositories import SqlAddressRepository, SqlPersonRepository
-from crud.repository import FakeAddressStore, FakePersonStore
 
 
 def _create_sqlite_engine():
@@ -41,32 +40,18 @@ def sql_address_repo(sql_session_factory):
     return SqlAddressRepository(sql_session_factory)
 
 
-@pytest.fixture(params=["fake", "sql"])
-def backend(request):
-    return request.param
-
-
 @pytest.fixture
-def person_repo(backend, sql_session_factory):
-    if backend == "fake":
-        return FakePersonStore()
+def person_repo(sql_session_factory):
     return SqlPersonRepository(sql_session_factory)
 
 
 @pytest.fixture
-def address_repo(backend, person_repo, sql_session_factory):
-    if backend == "fake":
-        return FakeAddressStore(person_repo)
+def address_repo(sql_session_factory):
     return SqlAddressRepository(sql_session_factory)
 
 
 @pytest.fixture
-def person_repo_factory(backend):
-    if backend == "fake":
-        def _factory():
-            return FakePersonStore()
-        return _factory
-
+def person_repo_factory():
     def _factory():
         engine = _create_sqlite_engine()
         Base.metadata.create_all(engine)

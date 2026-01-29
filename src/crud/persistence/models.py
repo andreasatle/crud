@@ -27,3 +27,9 @@ class AddressRow(Base):
     city: Mapped[str] = mapped_column(String, nullable=False)
     postal_code: Mapped[str] = mapped_column(String, nullable=False)
     country: Mapped[str | None] = mapped_column(String, nullable=True)
+
+
+class AddressTombstone(Base):
+    __tablename__ = "address_tombstone"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)

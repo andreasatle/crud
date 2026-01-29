@@ -6,14 +6,12 @@ from crud.address import Address
 from crud.person import Person
 from crud.repository import AddressNotFoundError
 
-from .models import AddressRow, PersonRow
+from .models import AddressRow, AddressTombstone, PersonRow
 
 
 class SqlPersonRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
         self._session_factory = session_factory
-        if not hasattr(self._session_factory, "_address_deleted_ids"):
-            self._session_factory._address_deleted_ids = set()
 
     def create(self, person: Person) -> None:
         with self._session_factory() as session:
@@ -55,23 +53,25 @@ class SqlPersonRepository:
                 .scalars()
                 .all()
             )
+            for address_id in address_ids:
+                if session.get(AddressTombstone, address_id) is None:
+                    session.add(AddressTombstone(id=address_id))
             session.delete(row)
             try:
                 session.commit()
             except IntegrityError as exc:
                 raise ValueError("Person delete failed") from exc
-        self._session_factory._address_deleted_ids.update(address_ids)
 
 
 class SqlAddressRepository:
     def __init__(self, session_factory: sessionmaker[Session]) -> None:
         self._session_factory = session_factory
-        if not hasattr(self._session_factory, "_address_deleted_ids"):
-            self._session_factory._address_deleted_ids = set()
-        self._deleted_ids: set[str] = self._session_factory._address_deleted_ids
 
     def create(self, address: Address) -> None:
         with self._session_factory() as session:
+            tombstone = session.get(AddressTombstone, address.id)
+            if tombstone is not None:
+                session.delete(tombstone)
             row = AddressRow(
                 id=address.id,
                 person_id=address.person_id,
@@ -85,14 +85,13 @@ class SqlAddressRepository:
                 session.commit()
             except IntegrityError as exc:
                 raise ValueError("Address create failed") from exc
-        self._deleted_ids.discard(address.id)
 
     def get_by_id(self, id: str) -> Address | None:
-        if id in self._deleted_ids:
-            return None
         with self._session_factory() as session:
             row = session.get(AddressRow, id)
             if row is None:
+                if session.get(AddressTombstone, id) is not None:
+                    return None
                 raise KeyError(f"Address with id '{id}' does not exist")
             return Address(
                 id=row.id,
@@ -104,8 +103,6 @@ class SqlAddressRepository:
             )
 
     def update(self, address: Address) -> None:
-        if address.id in self._deleted_ids:
-            raise ValueError(f"Address with id '{address.id}' does not exist")
         with self._session_factory() as session:
             row = session.get(AddressRow, address.id)
             if row is None:
@@ -120,17 +117,19 @@ class SqlAddressRepository:
                 raise ValueError("Address update failed") from exc
 
     def delete(self, address_id: str) -> None:
-        if address_id in self._deleted_ids:
-            raise AddressNotFoundError(f"Address with id '{address_id}' does not exist")
         with self._session_factory() as session:
+            if session.get(AddressTombstone, address_id) is not None:
+                raise AddressNotFoundError(
+                    f"Address with id '{address_id}' does not exist"
+                )
             row = session.get(AddressRow, address_id)
             if row is None:
                 raise AddressNotFoundError(
                     f"Address with id '{address_id}' does not exist"
                 )
+            session.add(AddressTombstone(id=address_id))
             session.delete(row)
             try:
                 session.commit()
             except IntegrityError as exc:
                 raise ValueError("Address delete failed") from exc
-        self._deleted_ids.add(address_id)
