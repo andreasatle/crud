@@ -35,7 +35,7 @@ class SqlPersonRepository:
             return Person(id=row.id, name=row.name, email=row.email)
 
     def update(self, person: Person) -> None:
-        # Updates only non-identity fields; missing id is ValueError.
+        # Updates only non-identity fields; missing id is ValueError (frozen).
         with self._session_factory() as session:
             row = session.get(PersonRow, person.id)
             if row is None:
@@ -50,6 +50,7 @@ class SqlPersonRepository:
 
     def delete(self, person_id: str) -> None:
         # Cascade authority: DB ON DELETE CASCADE is authoritative; tombstones are intentional.
+        # Missing id is ValueError (frozen); do not normalize with KeyError.
         with self._session_factory() as session:
             row = session.get(PersonRow, person_id)
             if row is None:
@@ -99,6 +100,7 @@ class SqlAddressRepository:
 
     def get_by_id(self, id: str) -> Address | None:
         # Missing id: KeyError if never existed, None if deleted (tombstoned).
+        # This distinction is intentional; do not collapse to None or KeyError.
         with self._session_factory() as session:
             row = session.get(AddressRow, id)
             if row is None:
@@ -116,6 +118,7 @@ class SqlAddressRepository:
 
     def update(self, address: Address) -> None:
         # Missing id is ValueError; do not alter identity.
+        # Never-existed vs deleted is not exposed here by design.
         with self._session_factory() as session:
             row = session.get(AddressRow, address.id)
             if row is None:
@@ -132,6 +135,7 @@ class SqlAddressRepository:
 
     def delete(self, address_id: str) -> None:
         # Tombstone tracks deleted lifecycle; already-deleted and never-existing are distinct.
+        # AddressNotFoundError is intentional (ValueError+KeyError); do not normalize.
         with self._session_factory() as session:
             if session.get(AddressTombstone, address_id) is not None:
                 raise AddressNotFoundError(
