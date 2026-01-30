@@ -467,3 +467,176 @@ If you want, next we can:
 
 * enumerate **exact method signatures** for T6/T7, or
 * decide whether cascade delete belongs in DB or repository logic (design fork).
+
+---
+---
+
+Here is a **clean, complete task list for D-002**, aligned with everything you’ve already built and fixed.
+
+No prose fluff, just structure.
+
+---
+
+## **D-002 — Switch Test Authority from Fake → SQL**
+
+**Goal**
+Make SQL persistence authoritative **without changing invariant semantics**.
+
+Fake remains available only as:
+
+* a reference implementation
+* a fallback / debugging aid
+* not the source of truth
+
+---
+
+## **Task List**
+
+### **D-002-T1 — Introduce SQL-backed test fixtures**
+
+**Purpose**
+Create reusable test fixtures that provide:
+
+* SQLite engine
+* schema creation
+* session factory
+* SQL repositories
+
+**Notes**
+
+* In-memory SQLite
+* Fresh DB per test
+* No Fake involved
+
+---
+
+### **D-002-T2 — Parameterize repositories in tests**
+
+**Purpose**
+Allow tests to run against **either** Fake or SQL repositories.
+
+**Mechanics**
+
+* Replace direct `FakePersonStore()` / `FakeAddressStore()` usage with injected repo fixtures
+* Same test logic, different backend
+
+**Rule**
+
+> Tests must not know *which* persistence they use.
+
+---
+
+### **D-002-T3 — Dual-run verification (Fake vs SQL)**
+
+**Purpose**
+Prove semantic equivalence.
+
+**Action**
+Run each invariant test:
+
+* once with Fake
+* once with SQL
+
+**Outcome**
+
+* Any divergence is a SQL bug, not a test change
+
+---
+
+### **D-002-T4 — Promote SQL to default test backend**
+
+**Purpose**
+Flip authority.
+
+**Action**
+
+* SQL-backed fixtures become default
+* Fake fixtures become optional / secondary
+
+**Rule**
+
+> Invariants now validate SQL behavior.
+
+---
+
+### **D-002-T5 — Remove Fake from invariant tests**
+
+**Purpose**
+Enforce authority shift.
+
+**Action**
+
+* Delete Fake usage from invariant tests
+* Keep Fake only in:
+
+  * reference tests
+  * diagnostics
+  * documentation
+
+---
+
+### **D-002-T6 — Lock Fake behind directive**
+
+**Purpose**
+Prevent regression.
+
+**Action**
+
+* Mark Fake persistence as:
+
+  * non-authoritative
+  * deprecated for invariants
+* Add directive note:
+
+  * “Fake must never be reintroduced as test authority”
+
+---
+
+### **D-002-T7 — SQL lifecycle enforcement audit**
+
+**Purpose**
+Confirm DB-level guarantees now back invariants.
+
+**Check**
+
+* foreign keys
+* cascade deletes
+* uniqueness
+* nullability
+
+**No new behavior**
+Only confirm alignment with I-001 → I-020.
+
+---
+
+### **D-002-T8 — Ledger + directive closure**
+
+**Purpose**
+Close the loop formally.
+
+**Action**
+
+* Update ledger:
+
+  * Fake → SQL authority transition complete
+* Close D-002
+* Reference D-001 as superseded for test authority
+
+---
+
+## **Resulting State**
+
+After D-002:
+
+* ✅ Invariants test **real persistence**
+* ✅ SQL is authoritative
+* ✅ Fake is explicitly non-authoritative
+* ✅ No “null-space” code paths
+* ✅ Surface growth is measurable and enforced
+
+If you want, next we can:
+
+* compress this into a **single migration task**, or
+* draft **D-003 — Persistence Hardening** (indexes, constraints, perf), or
+* formalize the **“mechanical refactor” task class** so this never bites again.
+
