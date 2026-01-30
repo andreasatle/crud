@@ -49,7 +49,8 @@ class SqlPersonRepository:
                 raise ValueError("Person update failed") from exc
 
     def delete(self, person_id: str) -> None:
-        # Cascade authority: DB ON DELETE CASCADE is authoritative; tombstones are intentional.
+        # Cascade authority: DB ON DELETE CASCADE is authoritative.
+        # Tombstones are reinforcing lifecycle tracking and MUST NOT be removed or reordered.
         # Missing id is ValueError (frozen); do not normalize with KeyError.
         with self._session_factory() as session:
             row = session.get(PersonRow, person_id)
@@ -134,8 +135,8 @@ class SqlAddressRepository:
                 raise ValueError("Address update failed") from exc
 
     def delete(self, address_id: str) -> None:
-        # Tombstone tracks deleted lifecycle; already-deleted and never-existing are distinct.
-        # AddressNotFoundError is intentional (ValueError+KeyError); do not normalize.
+        # Tombstone tracking is defensive lifecycle state; do not collapse into DB-only semantics.
+        # Already-deleted vs never-existing must remain distinct; AddressNotFoundError is intentional.
         with self._session_factory() as session:
             if session.get(AddressTombstone, address_id) is not None:
                 raise AddressNotFoundError(

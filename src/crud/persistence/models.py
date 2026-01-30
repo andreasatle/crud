@@ -17,6 +17,7 @@ class PersonRow(Base):
 class AddressRow(Base):
     __tablename__ = "address"
 
+    # Authoritative cascade: DB ON DELETE CASCADE defines lifecycle coupling.
     id: Mapped[str] = mapped_column(String, primary_key=True)
     person_id: Mapped[str] = mapped_column(
         String,
