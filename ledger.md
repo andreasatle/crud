@@ -256,6 +256,12 @@ uv add "sqlalchemy>=2.0,<3.0"
 [TASK]
 Task — D-001-T1: Introduce SQLAlchemy 2.x Persistence Skeleton
 
+[TASK]
+Task — D-003-T1: Persistence Hardening and Semantic Freeze
+
+[VALIDATION]
+SQL persistence semantics frozen; no new behavior introduced.
+
 ...
 
 [TASK]

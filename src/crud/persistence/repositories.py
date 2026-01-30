@@ -1,3 +1,5 @@
+# SQL persistence is authoritative post–D-002; repository behavior is frozen and
+# must preserve the observable semantics enforced by invariants.
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
@@ -14,15 +16,18 @@ class SqlPersonRepository:
         self._session_factory = session_factory
 
     def create(self, person: Person) -> None:
+        # Transaction is operation-scoped; do not share sessions.
         with self._session_factory() as session:
             row = PersonRow(id=person.id, name=person.name, email=person.email)
             session.add(row)
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Person create failed") from exc
 
     def get_by_id(self, id: str) -> Person | None:
+        # Returns None when missing (I-006); no KeyError here by design.
         with self._session_factory() as session:
             row = session.get(PersonRow, id)
             if row is None:
@@ -30,6 +35,7 @@ class SqlPersonRepository:
             return Person(id=row.id, name=row.name, email=row.email)
 
     def update(self, person: Person) -> None:
+        # Updates only non-identity fields; missing id is ValueError.
         with self._session_factory() as session:
             row = session.get(PersonRow, person.id)
             if row is None:
@@ -39,9 +45,11 @@ class SqlPersonRepository:
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Person update failed") from exc
 
     def delete(self, person_id: str) -> None:
+        # Cascade authority: DB ON DELETE CASCADE is authoritative; tombstones are intentional.
         with self._session_factory() as session:
             row = session.get(PersonRow, person_id)
             if row is None:
@@ -60,6 +68,7 @@ class SqlPersonRepository:
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Person delete failed") from exc
 
 
@@ -68,6 +77,7 @@ class SqlAddressRepository:
         self._session_factory = session_factory
 
     def create(self, address: Address) -> None:
+        # Ownership fields are persistence-only; domain identity is defined solely by id.
         with self._session_factory() as session:
             tombstone = session.get(AddressTombstone, address.id)
             if tombstone is not None:
@@ -84,9 +94,11 @@ class SqlAddressRepository:
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Address create failed") from exc
 
     def get_by_id(self, id: str) -> Address | None:
+        # Missing id: KeyError if never existed, None if deleted (tombstoned).
         with self._session_factory() as session:
             row = session.get(AddressRow, id)
             if row is None:
@@ -103,6 +115,7 @@ class SqlAddressRepository:
             )
 
     def update(self, address: Address) -> None:
+        # Missing id is ValueError; do not alter identity.
         with self._session_factory() as session:
             row = session.get(AddressRow, address.id)
             if row is None:
@@ -114,9 +127,11 @@ class SqlAddressRepository:
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Address update failed") from exc
 
     def delete(self, address_id: str) -> None:
+        # Tombstone tracks deleted lifecycle; already-deleted and never-existing are distinct.
         with self._session_factory() as session:
             if session.get(AddressTombstone, address_id) is not None:
                 raise AddressNotFoundError(
@@ -132,4 +147,5 @@ class SqlAddressRepository:
             try:
                 session.commit()
             except IntegrityError as exc:
+                # Error semantics are intentional; do not "clean up" without a directive.
                 raise ValueError("Address delete failed") from exc

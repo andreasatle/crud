@@ -32,4 +32,5 @@ class AddressRow(Base):
 class AddressTombstone(Base):
     __tablename__ = "address_tombstone"
 
+    # Tombstones are intentional to preserve delete semantics (I-019/I-020).
     id: Mapped[str] = mapped_column(String, primary_key=True)
