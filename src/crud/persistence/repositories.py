@@ -16,7 +16,8 @@ class SqlPersonRepository:
         self._session_factory = session_factory
 
     def create(self, person: Person) -> None:
-        # Transaction is operation-scoped; do not share sessions.
+        # Transaction is operation-scoped; do not share sessions across operations.
+        # Shared/cached/ambient sessions or cross-operation reuse is forbidden without a directive.
         with self._session_factory() as session:
             row = PersonRow(id=person.id, name=person.name, email=person.email)
             session.add(row)
@@ -28,6 +29,7 @@ class SqlPersonRepository:
 
     def get_by_id(self, id: str) -> Person | None:
         # Returns None when missing (I-006); no KeyError here by design.
+        # Transaction scope MUST end with this method; no session reuse.
         with self._session_factory() as session:
             row = session.get(PersonRow, id)
             if row is None:
@@ -36,6 +38,7 @@ class SqlPersonRepository:
 
     def update(self, person: Person) -> None:
         # Updates only non-identity fields; missing id is ValueError (frozen).
+        # One operation == one transaction; do not pass sessions between methods.
         with self._session_factory() as session:
             row = session.get(PersonRow, person.id)
             if row is None:
@@ -52,6 +55,7 @@ class SqlPersonRepository:
         # Cascade authority: DB ON DELETE CASCADE is authoritative.
         # Tombstones are reinforcing lifecycle tracking and MUST NOT be removed or reordered.
         # Missing id is ValueError (frozen); do not normalize with KeyError.
+        # Each call owns its transaction boundary; no ambient or shared sessions.
         with self._session_factory() as session:
             row = session.get(PersonRow, person_id)
             if row is None:
@@ -80,6 +84,7 @@ class SqlAddressRepository:
 
     def create(self, address: Address) -> None:
         # Ownership fields are persistence-only; domain identity is defined solely by id.
+        # Operation-scoped transaction; session reuse is forbidden.
         with self._session_factory() as session:
             tombstone = session.get(AddressTombstone, address.id)
             if tombstone is not None:
@@ -102,6 +107,7 @@ class SqlAddressRepository:
     def get_by_id(self, id: str) -> Address | None:
         # Missing id: KeyError if never existed, None if deleted (tombstoned).
         # This distinction is intentional; do not collapse to None or KeyError.
+        # Transaction scope is limited to this method; no shared sessions.
         with self._session_factory() as session:
             row = session.get(AddressRow, id)
             if row is None:
@@ -120,6 +126,7 @@ class SqlAddressRepository:
     def update(self, address: Address) -> None:
         # Missing id is ValueError; do not alter identity.
         # Never-existed vs deleted is not exposed here by design.
+        # One operation per transaction; no session reuse across calls.
         with self._session_factory() as session:
             row = session.get(AddressRow, address.id)
             if row is None:
@@ -137,6 +144,7 @@ class SqlAddressRepository:
     def delete(self, address_id: str) -> None:
         # Tombstone tracking is defensive lifecycle state; do not collapse into DB-only semantics.
         # Already-deleted vs never-existing must remain distinct; AddressNotFoundError is intentional.
+        # This method owns its transaction boundary; cross-operation reuse is forbidden.
         with self._session_factory() as session:
             if session.get(AddressTombstone, address_id) is not None:
                 raise AddressNotFoundError(
